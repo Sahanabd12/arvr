@@ -3,10 +3,18 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>M‑PRO9 • Car 3D + AR Demo</title>
+<title>M-PRO9 • Car 3D + AR Demo</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#0b0f1f">
+
+<!-- Preload assets (GitHub Pages friendly) -->
+<link rel="preload" as="fetch" href="assets/seat_ibiza_mk3_cupra_2006 (1).glb" crossorigin>
+<link rel="preload" as="fetch" href="assets/Seat_Ibiza_MK3_Cupra_2006.usdz" crossorigin> <!-- update if you use a different filename -->
+<link rel="preload" as="image" href="assets/Screenshot_2025-10-28_111051-removebg-preview.png">
+
 <!-- model-viewer -->
 <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+
 <style>
   :root{
     --bg:#0b0f1f; --panel:#0f1733; --ink:#eaf2ff; --muted:#a9b7dd;
@@ -14,56 +22,90 @@
     --radius:18px; --shadow:0 12px 40px rgba(10,15,40,.45); --maxw:1100px;
   }
   *{box-sizing:border-box}
-  html,body{margin:0;background:radial-gradient(1500px 700px at -10% -10%,rgba(77,241,255,.12),transparent 60%), var(--bg);
-    color:var(--ink);font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif}
+  html,body{
+    margin:0;
+    background:
+      radial-gradient(1500px 700px at -10% -10%,rgba(77,241,255,.12),transparent 60%),
+      var(--bg);
+    color:var(--ink);
+    font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif
+  }
   a{color:var(--accent);text-decoration:none}
   /* Header */
-  .top{position:sticky;top:0;z-index:20;background:linear-gradient(180deg,rgba(11,15,31,.95),rgba(11,15,31,.55));
-       border-bottom:1px solid var(--border);backdrop-filter:blur(8px)}
+  .top{
+    position:sticky;top:0;z-index:20;
+    background:linear-gradient(180deg,rgba(11,15,31,.95),rgba(11,15,31,.55));
+    border-bottom:1px solid var(--border);backdrop-filter:blur(8px)
+  }
   .top .in{max-width:var(--maxw);margin:auto;display:flex;gap:14px;align-items:center;padding:14px 18px}
   .brand{font-weight:800;letter-spacing:.3px}
   .nav{margin-left:auto;display:flex;gap:10px}
   .nav a{padding:8px 10px;border-radius:10px}
   .nav a:hover{background:#0d193d}
-  .btn{display:inline-flex;gap:8px;align-items:center;padding:12px 16px;border-radius:12px;border:1px solid #2a3c7a;
-       background:linear-gradient(180deg,#1a3270,#132554); color:#fff; box-shadow:0 8px 22px rgba(25,60,140,.4); cursor:pointer}
+  .btn{
+    display:inline-flex;gap:8px;align-items:center;
+    padding:12px 16px;border-radius:12px;border:1px solid #2a3c7a;
+    background:linear-gradient(180deg,#1a3270,#132554); color:#fff;
+    box-shadow:0 8px 22px rgba(25,60,140,.4); cursor:pointer
+  }
   .ghost{background:transparent;border-color:#2a3c7a}
   .btn:active{transform:translateY(1px)}
+  .btn:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+  a:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:8px}
+
   /* Hero */
   .hero{max-width:var(--maxw);margin:26px auto 10px;padding:0 18px;display:grid;grid-template-columns:1.2fr 1fr;gap:18px}
-  .card{background:linear-gradient(180deg,var(--panel),#0b1430);border:1px solid var(--border);border-radius:24px;padding:22px;
-        box-shadow:var(--shadow);position:relative;overflow:hidden}
-  .card::before{content:"";position:absolute;inset:-40% auto auto -30%;width:340px;height:340px;border-radius:50%;
-        background:radial-gradient(circle at 30% 30%, var(--accent2), transparent 60%);filter:blur(60px);opacity:.25}
+  .card{
+    background:linear-gradient(180deg,var(--panel),#0b1430);
+    border:1px solid var(--border);border-radius:24px;padding:22px;
+    box-shadow:var(--shadow);position:relative;overflow:hidden
+  }
+  .card::before{
+    content:"";position:absolute;inset:-40% auto auto -30%;width:340px;height:340px;border-radius:50%;
+    background:radial-gradient(circle at 30% 30%, var(--accent2), transparent 60%);
+    filter:blur(60px);opacity:.25
+  }
   h1{margin:0 0 8px;font-size:clamp(28px,4vw,44px);line-height:1.08}
   .lead{color:var(--muted);margin:0 0 14px}
   .cta{display:flex;gap:10px;flex-wrap:wrap}
+
   .viewer{position:relative;height:480px;border-radius:16px;border:1px solid var(--border);overflow:hidden;background:#0a122b}
-  .viewer .hud{position:absolute;left:10px;bottom:10px;padding:6px 10px;background:rgba(255,255,255,.92);
-    border-radius:999px;font-size:.9rem;color:#0a1330;border:1px solid rgba(190,210,255,.35)}
+  .viewer .hud{
+    position:absolute;left:10px;bottom:10px;padding:6px 10px;background:rgba(255,255,255,.92);
+    border-radius:999px;font-size:.9rem;color:#0a1330;border:1px solid rgba(190,210,255,.35)
+  }
+  .viewer .hud.right{left:auto;right:10px}
+
   model-viewer{width:100%;height:100%;display:block; --poster-color:transparent}
+
   .grid{max-width:var(--maxw);margin:18px auto;padding:0 18px;display:grid;grid-template-columns:1fr 1fr;gap:18px}
   .spec{background:linear-gradient(180deg,var(--panel),#0b1430);border:1px solid var(--border);border-radius:16px;padding:16px}
   .kpis{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
   .pill{display:inline-flex;gap:8px;align-items:center;background:rgba(162,89,255,.12);
         border:1px solid var(--border);color:#cfe1ff;padding:8px 12px;border-radius:999px}
   .footer{max-width:var(--maxw);margin:26px auto 40px;padding:0 18px;color:var(--muted)}
+
   /* Hover lift */
   .lift{transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease}
   .lift:hover{transform:translateY(-6px);box-shadow:0 16px 44px rgba(0,0,0,.55);border-color:#2b4a9b}
-  @media (max-width: 980px){ .hero{grid-template-columns:1fr} .viewer{height:380px} .grid{grid-template-columns:1fr} }
+
+  @media (max-width: 980px){
+    .hero{grid-template-columns:1fr}
+    .viewer{height:380px}
+    .grid{grid-template-columns:1fr}
+  }
 </style>
 </head>
 <body>
   <div class="top">
     <div class="in">
-      <div class="brand">M‑PRO9</div>
-      <nav class="nav">
+      <div class="brand">M-PRO9</div>
+      <nav class="nav" aria-label="Primary">
         <a href="#viewer">3D Viewer</a>
         <a href="#details">Details</a>
         <a href="#ar">AR</a>
       </nav>
-      <button class="btn ghost" id="btn-ar-nav">View in AR</button>
+      <button class="btn ghost" id="btn-ar-nav" type="button" aria-label="Open model in AR">View in AR</button>
     </div>
   </div>
 
@@ -72,22 +114,30 @@
       <h1>Interactive Car — 3D & AR</h1>
       <p class="lead">Drag to rotate, scroll to zoom. Launch Augmented Reality on mobile (iOS Quick Look / Android Scene Viewer).</p>
       <div class="cta">
-        <button class="btn" id="btn-rotate">Toggle Auto‑Rotate</button>
-        <button class="btn" id="btn-screenshot">Screenshot</button>
+        <button class="btn" id="btn-rotate" type="button" aria-pressed="true">Toggle Auto-Rotate</button>
+        <button class="btn" id="btn-screenshot" type="button">Screenshot</button>
         <a class="btn ghost" href="assets/seat_ibiza_mk3_cupra_2006 (1).glb" download>Download GLB</a>
       </div>
     </div>
 
-    <div class="card lift" id="viewer">
-      <model-viewer id="car" src="assets/seat_ibiza_mk3_cupra_2006 (1).glb"
+    <div class="card lift viewer" id="viewer">
+      <model-viewer id="car"
+        src="assets/seat_ibiza_mk3_cupra_2006 (1).glb"
         poster="assets/Screenshot_2025-10-28_111051-removebg-preview.png"
-        camera-controls auto-rotate rotation-per-second="20deg"
-        exposure="1.0" shadow-intensity="1" environment-image="neutral"
-        ar ar-modes="webxr scene-viewer quick-look"
-        ios-src="assets/Cupra_Terramar_Hero_Purple_GLB.usdz"
-        alt="Car model">
+        camera-controls
+        auto-rotate
+        rotation-per-second="20deg"
+        exposure="1.0"
+        shadow-intensity="1"
+        environment-image="neutral"
+        ar
+        ar-modes="webxr scene-viewer quick-look"
+        ios-src="assets/Seat_Ibiza_MK3_Cupra_2006.usdz#allowsContentScaling=1"  <!-- change if your USDZ has a different name -->
+        interaction-prompt="auto"
+        alt="Interactive 3D model of a Seat Ibiza">
       </model-viewer>
       <div class="hud">Drag to rotate • Scroll to zoom</div>
+      <div class="hud right" id="loadbar" role="status" aria-live="polite">Loading… 0%</div>
     </div>
   </section>
 
@@ -111,57 +161,98 @@
   <section id="ar" class="grid">
     <div class="spec lift">
       <h3>Open in AR (Custom Button)</h3>
-      <p>This button uses platform-specific launchers as a fallback to <code>&lt;model-viewer&gt;</code>‘s built‑in AR.</p>
-      <button class="btn" id="view-ar">View in AR</button>
+      <p>This button uses platform-specific launchers as a fallback to <code>&lt;model-viewer&gt;</code>’s built-in AR.</p>
+      <button class="btn" id="view-ar" type="button">View in AR</button>
     </div>
     <div class="spec lift">
       <h3>Assets</h3>
       <ul>
-        <li>GLB: <code>assets/cupra_terramar_hero_purple_glb.glb</code></li>
-        <li>USDZ: <code>assets/Cupra_Terramar_Hero_Purple_GLB.usdz</code></li>
+        <li>GLB (3D & Scene Viewer): <code>assets/seat_ibiza_mk3_cupra_2006 (1).glb</code></li>
+        <li>USDZ (Quick Look): <code>assets/seat_ibiza_mk3_cupra_2006.usdz</code></li>
       </ul>
     </div>
   </section>
 
-  <div class="footer">© M‑PRO9. Replace assets with your own models for production deployment.</div>
+  <div class="footer">© M-PRO9. Replace assets with your own models for production deployment.</div>
 
 <script>
-// ========== Helper: platform checks ==========
+/* ================== Helper: platform checks ================== */
 const isIOS = (/iPad|iPhone|iPod/.test(navigator.userAgent)) ||
               (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 const isAndroid = /Android/i.test(navigator.userAgent);
 
-// ========== Model Viewer controls ==========
+/* ================== Model Viewer controls ================== */
 const mv = document.getElementById('car');
-document.getElementById('btn-rotate').addEventListener('click', ()=>{
-  if(mv.hasAttribute('auto-rotate')) mv.removeAttribute('auto-rotate');
-  else mv.setAttribute('auto-rotate','');
-});
-document.getElementById('btn-screenshot').addEventListener('click', async ()=>{
-  try{
-    const blob = await mv.toBlob({mimeType:"image/png"});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = 'car-snapshot.png'; a.click();
-    URL.revokeObjectURL(url);
-  }catch(e){ alert('Screenshot not supported in this browser.'); }
+const btnRotate = document.getElementById('btn-rotate');
+const btnScreenshot = document.getElementById('btn-screenshot');
+const loadbar = document.getElementById('loadbar');
+
+/* Reduced motion: disable auto-rotate by default */
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+if (prefersReducedMotion && mv.hasAttribute('auto-rotate')) {
+  mv.removeAttribute('auto-rotate');
+  btnRotate.setAttribute('aria-pressed', 'false');
+}
+
+/* Toggle auto-rotate with ARIA pressed state */
+btnRotate.addEventListener('click', () => {
+  if (mv.hasAttribute('auto-rotate')) {
+    mv.removeAttribute('auto-rotate');
+  } else {
+    mv.setAttribute('auto-rotate', '');
+  }
+  btnRotate.setAttribute('aria-pressed', mv.hasAttribute('auto-rotate') ? 'true' : 'false');
 });
 
-// ========== AR launchers ==========
-const USDZ_URL = 'assets/Cupra_Terramar_Hero_Purple_GLB.usdz';
-// For Scene Viewer in production, GLB must be hosted at a public HTTPS URL
-const GLB_URL  = location.origin + location.pathname.replace(/\/[^/]*$/, '') + 'assets/cupra_terramar_hero_purple_glb.glb';
+/* Screenshot (transparent PNG when supported) */
+btnScreenshot.addEventListener('click', async () => {
+  if (typeof mv.toBlob !== 'function') {
+    alert('Screenshot not supported in this browser.');
+    return;
+  }
+  try {
+    const blob = await mv.toBlob({ mimeType: 'image/png' });
+    if (!blob) throw new Error('Empty blob');
+    const url = URL.createObjectURL(blob);
+    const a = Object.assign(document.createElement('a'), { href: url, download: 'car-snapshot.png' });
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  } catch (e) {
+    alert('Screenshot failed.');
+  }
+});
+
+/* ================== Loading progress HUD ================== */
+mv.addEventListener('progress', (e) => {
+  const p = Math.round(100 * (e.detail.totalProgress || 0));
+  if (!Number.isFinite(p)) return;
+  loadbar.textContent = p < 100 ? `Loading… ${p}%` : 'Ready';
+  if (p >= 100) setTimeout(() => loadbar.remove(), 700);
+});
+
+/* ================== AR launchers (custom buttons) ================== */
+/* Absolute URL for Scene Viewer (required). Works under /arvr/ on GitHub Pages */
+const GLB_SCENE_VIEWER = new URL('assets/seat_ibiza_mk3_cupra_2006 (1).glb', location.href).href;
+/* iOS Quick Look with scaling allowed — update name if needed */
+const USDZ_QUICKLOOK = 'assets/Seat_Ibiza_MK3_Cupra_2006.usdz#allowsContentScaling=1';
+const TITLE = encodeURIComponent('M-PRO9 — Seat Ibiza');
+const LINK  = encodeURIComponent(location.href);
 
 function openAR(){
   if (isIOS) {
     const a = document.createElement('a');
     a.rel = 'ar';
-    a.href = USDZ_URL;
+    a.href = USDZ_QUICKLOOK;
     document.body.appendChild(a);
     a.click();
     a.remove();
   } else if (isAndroid) {
-    const intent = `intent://arvr.google.com/scene-viewer/1.0?file=${encodeURIComponent(GLB_URL)}&mode=ar_preferred#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=${encodeURIComponent(location.href)};end;`;
+    const intent =
+      `intent://arvr.google.com/scene-viewer/1.0?file=${encodeURIComponent(GLB_SCENE_VIEWER)}&mode=ar_preferred&title=${TITLE}&link=${LINK}` +
+      `#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;` +
+      `S.browser_fallback_url=${encodeURIComponent(location.href)};end;`;
     location.href = intent;
   } else {
     alert('Open this page on an iPhone or Android device to view in AR.');
@@ -169,6 +260,9 @@ function openAR(){
 }
 document.getElementById('view-ar').addEventListener('click', openAR);
 document.getElementById('btn-ar-nav').addEventListener('click', openAR);
+
+/* ================== Accessibility tweaks ================== */
+mv.setAttribute('aria-label','Interactive 3D model of a Seat Ibiza');
 </script>
 </body>
 </html>
