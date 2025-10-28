@@ -3,14 +3,13 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>M-PRO9 • Car 3D + AR Demo</title>
+<title>M-PRO9 • Rhino 3D + AR Demo</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 <meta name="theme-color" content="#0b0f1f">
 
-<!-- Preload assets -->
-<link rel="preload" as="fetch" href="model_56a_-_southern_white_rhino.glb" crossorigin>
-<link rel="preload" as="fetch" href="assets/Seat_Ibiza_MK3_Cupra_2006.usdz" crossorigin>
-<link rel="preload" as="image" href="assets/Screenshot_2025-10-28_111051-removebg-preview.png">
+<!-- Preload assets (your exact filenames/paths) -->
+<link rel="preload" as="fetch" href="assets/model_56a_-_southern_white_rhino.glb" crossorigin>
+<link rel="preload" as="fetch" href="assets/Model_56A_-_Southern_White_Rhino.usdz" crossorigin>
 
 <!-- model-viewer -->
 <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
@@ -73,25 +72,25 @@
 
   <section class="hero">
     <div class="card lift">
-      <h1>Interactive Car — 3D & AR</h1>
-      <p class="lead">Drag to rotate, scroll to zoom. Launch Augmented Reality on mobile (iOS Quick Look / Android Scene Viewer).</p>
+      <h1>Interactive Rhino — 3D & AR</h1>
+      <p class="lead">Drag to rotate, scroll to zoom. Launch Augmented Reality on mobile (iOS Quick Look / Android Scene Viewer). This GLB includes animation.</p>
       <div class="cta">
         <button class="btn" id="btn-rotate" type="button" aria-pressed="true">Toggle Auto-Rotate</button>
         <button class="btn" id="btn-screenshot" type="button">Screenshot</button>
-        <a class="btn ghost" href="model_56a_-_southern_white_rhino.glb" download>Download GLB</a>
+        <a class="btn ghost" href="assets/model_56a_-_southern_white_rhino.glb" download>Download GLB</a>
       </div>
     </div>
 
     <div class="card lift viewer" id="viewer">
       <model-viewer id="car"
-        src="model_56a_-_southern_white_rhino.glb"
-        poster="assets/Screenshot_2025-10-28_111051-removebg-preview.png"
+        src="assets/model_56a_-_southern_white_rhino.glb"
         camera-controls auto-rotate rotation-per-second="20deg"
         exposure="1.0" shadow-intensity="1" environment-image="neutral"
         ar ar-modes="webxr scene-viewer quick-look"
-        ios-src="assets/Seat_Ibiza_MK3_Cupra_2006.usdz#allowsContentScaling=1"
+        ios-src="assets/Model_56A_-_Southern_White_Rhino.usdz#allowsContentScaling=1"
+        autoplay
         interaction-prompt="auto"
-        alt="Interactive 3D model of a Seat Ibiza">
+        alt="Animated 3D model of a Southern White Rhino">
       </model-viewer>
       <div class="hud">Drag to rotate • Scroll to zoom</div>
       <div class="hud right" id="loadbar">Loading… 0%</div>
@@ -102,8 +101,8 @@
     <div class="spec lift">
       <h3>Highlights</h3>
       <div class="kpis">
+        <span class="pill">Animated GLB</span>
         <span class="pill">Realtime 3D</span>
-        <span class="pill">PBR Materials</span>
         <span class="pill">AR Quick Look</span>
         <span class="pill">Scene Viewer</span>
       </div>
@@ -124,8 +123,8 @@
     <div class="spec lift">
       <h3>Assets</h3>
       <ul>
-        <li>GLB: <code>model_56a_-_southern_white_rhino.glb</code></li>
-        <li>USDZ: <code>assets/Seat_Ibiza_MK3_Cupra_2006.usdz</code></li>
+        <li>GLB: <code>assets/model_56a_-_southern_white_rhino.glb</code></li>
+        <li>USDZ: <code>assets/Model_56A_-_Southern_White_Rhino.usdz</code></li>
       </ul>
     </div>
   </section>
@@ -140,37 +139,43 @@ const btnRotate=document.getElementById('btn-rotate');
 const btnScreenshot=document.getElementById('btn-screenshot');
 const loadbar=document.getElementById('loadbar');
 
+/* Toggle auto-rotate */
 btnRotate.addEventListener('click',()=>{
-  if(mv.hasAttribute('auto-rotate'))mv.removeAttribute('auto-rotate');else mv.setAttribute('auto-rotate','');
-  btnRotate.setAttribute('aria-pressed',mv.hasAttribute('auto-rotate')?'true':'false');
+  if(mv.hasAttribute('auto-rotate')) mv.removeAttribute('auto-rotate');
+  else mv.setAttribute('auto-rotate','');
+  btnRotate.setAttribute('aria-pressed', mv.hasAttribute('auto-rotate') ? 'true' : 'false');
 });
 
+/* Screenshot */
 btnScreenshot.addEventListener('click',async()=>{
-  if(typeof mv.toBlob!=='function'){alert('Screenshot not supported.');return;}
+  if(typeof mv.toBlob!=='function'){ alert('Screenshot not supported.'); return; }
   const blob=await mv.toBlob({mimeType:'image/png'});
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a');
-  a.href=url;a.download='car-snapshot.png';a.click();URL.revokeObjectURL(url);
+  a.href=url; a.download='rhino-snapshot.png'; a.click();
+  URL.revokeObjectURL(url);
 });
 
+/* Loading HUD */
 mv.addEventListener('progress',e=>{
   const p=Math.round(100*(e.detail.totalProgress||0));
   loadbar.textContent=p<100?`Loading… ${p}%`:'Ready';
-  if(p>=100)setTimeout(()=>loadbar.remove(),800);
+  if(p>=100) setTimeout(()=>loadbar.remove(),800);
 });
 
-const GLB_URL=new URL('model_56a_-_southern_white_rhino.glb',location.href).href;
-const USDZ_URL='assets/Seat_Ibiza_MK3_Cupra_2006.usdz#allowsContentScaling=1';
-const TITLE=encodeURIComponent('M-PRO9 — Seat Ibiza');
+/* AR launchers */
+const GLB_URL=new URL('assets/model_56a_-_southern_white_rhino.glb',location.href).href; // absolute for Scene Viewer
+const USDZ_URL='assets/Model_56A_-_Southern_White_Rhino.usdz#allowsContentScaling=1';
+const TITLE=encodeURIComponent('M-PRO9 — Southern White Rhino');
 const LINK=encodeURIComponent(location.href);
 
 function openAR(){
   if(isIOS){
     const a=document.createElement('a');
-    a.rel='ar';a.href=USDZ_URL;document.body.appendChild(a);a.click();a.remove();
+    a.rel='ar'; a.href=USDZ_URL; document.body.appendChild(a); a.click(); a.remove();
   }else if(isAndroid){
     const intent=`intent://arvr.google.com/scene-viewer/1.0?file=${encodeURIComponent(GLB_URL)}&mode=ar_preferred&title=${TITLE}&link=${LINK}`+
-    `#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=${encodeURIComponent(location.href)};end;`;
+      `#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=${encodeURIComponent(location.href)};end;`;
     location.href=intent;
   }else{
     alert('Open this page on an iPhone or Android device to view in AR.');
