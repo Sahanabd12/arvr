@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#0b0f1f">
 
 <!-- Preload assets -->
-<link rel="preload" as="fetch" href="assets/seat_ibiza_mk3_cupra_2006.glb" crossorigin>
+<link rel="preload" as="fetch" href="model_56a_-_southern_white_rhino.glb" crossorigin>
 <link rel="preload" as="fetch" href="assets/Seat_Ibiza_MK3_Cupra_2006.usdz" crossorigin>
 <link rel="preload" as="image" href="assets/Screenshot_2025-10-28_111051-removebg-preview.png">
 
@@ -78,13 +78,13 @@
       <div class="cta">
         <button class="btn" id="btn-rotate" type="button" aria-pressed="true">Toggle Auto-Rotate</button>
         <button class="btn" id="btn-screenshot" type="button">Screenshot</button>
-        <a class="btn ghost" href="assets/seat_ibiza_mk3_cupra_2006.glb" download>Download GLB</a>
+        <a class="btn ghost" href="model_56a_-_southern_white_rhino.glb" download>Download GLB</a>
       </div>
     </div>
 
     <div class="card lift viewer" id="viewer">
       <model-viewer id="car"
-        src="assets/seat_ibiza_mk3_cupra_2006.glb"
+        src="model_56a_-_southern_white_rhino.glb"
         poster="assets/Screenshot_2025-10-28_111051-removebg-preview.png"
         camera-controls auto-rotate rotation-per-second="20deg"
         exposure="1.0" shadow-intensity="1" environment-image="neutral"
@@ -124,7 +124,7 @@
     <div class="spec lift">
       <h3>Assets</h3>
       <ul>
-        <li>GLB: <code>assets/seat_ibiza_mk3_cupra_2006.glb</code></li>
+        <li>GLB: <code>model_56a_-_southern_white_rhino.glb</code></li>
         <li>USDZ: <code>assets/Seat_Ibiza_MK3_Cupra_2006.usdz</code></li>
       </ul>
     </div>
@@ -159,7 +159,7 @@ mv.addEventListener('progress',e=>{
   if(p>=100)setTimeout(()=>loadbar.remove(),800);
 });
 
-const GLB_URL=new URL('assets/seat_ibiza_mk3_cupra_2006.glb',location.href).href;
+const GLB_URL=new URL('model_56a_-_southern_white_rhino.glb',location.href).href;
 const USDZ_URL='assets/Seat_Ibiza_MK3_Cupra_2006.usdz#allowsContentScaling=1';
 const TITLE=encodeURIComponent('M-PRO9 — Seat Ibiza');
 const LINK=encodeURIComponent(location.href);
